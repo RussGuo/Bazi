@@ -1,59 +1,542 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="referrer" content="never" />
-<title>测试页面</title>
-<script>
-if(top != self){  
-	top.location.href = self.location.href;  
-}
-document.write("<script src='./js/jquery-3.6.0.min.js'><\/script>");
-document.write("<script src='./js/paipan.js?v="+Math.random()+"'><\/script>");
-document.write("<script src='./js/paipan.gx.js?v="+Math.random()+"'><\/script>");
-</script> 
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>八字排盘 - 新版模块化演示</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Microsoft YaHei", sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    h1 {
+      color: white;
+      text-align: center;
+      margin-bottom: 30px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    }
+    .card h2 {
+      color: #333;
+      border-bottom: 2px solid #667eea;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+    .form-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+    .form-group {
+      flex: 1;
+      min-width: 120px;
+    }
+    .form-group label {
+      display: block;
+      color: #555;
+      margin-bottom: 5px;
+      font-size: 14px;
+    }
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    .form-group input:focus, .form-group select:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+    }
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .checkbox-group input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+    }
+    button {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+    }
+    .bazi-display {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin: 20px 0;
+    }
+    .pillar {
+      text-align: center;
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 15px 20px;
+      min-width: 80px;
+    }
+    .pillar-name {
+      color: #888;
+      font-size: 12px;
+      margin-bottom: 10px;
+    }
+    .pillar-gan {
+      font-size: 32px;
+      color: #333;
+      font-weight: bold;
+    }
+    .pillar-zhi {
+      font-size: 32px;
+      color: #667eea;
+      font-weight: bold;
+    }
+    .pillar-shishen {
+      font-size: 12px;
+      color: #888;
+      margin-top: 5px;
+    }
+    .result-section {
+      margin-top: 20px;
+    }
+    .result-section h3 {
+      color: #444;
+      margin-bottom: 15px;
+      font-size: 16px;
+    }
+    .wuxing-bar {
+      display: flex;
+      height: 30px;
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+    .wuxing-bar > div {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    .wx-jin { background: #f5a623; }
+    .wx-shui { background: #4a90d9; }
+    .wx-mu { background: #7ed321; }
+    .wx-huo { background: #d0021b; }
+    .wx-tu { background: #9b9b9b; }
+    .relations-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .relation-tag {
+      background: #e8f0fe;
+      color: #1967d2;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+    }
+    .dayun-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    .dayun-table th, .dayun-table td {
+      border: 1px solid #e0e0e0;
+      padding: 8px;
+      text-align: center;
+    }
+    .dayun-table th {
+      background: #f5f5f5;
+      color: #333;
+    }
+    .dayun-table tr:hover {
+      background: #f8f9fa;
+    }
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+    }
+    .info-item {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 8px;
+    }
+    .info-item label {
+      color: #888;
+      font-size: 12px;
+      display: block;
+      margin-bottom: 5px;
+    }
+    .info-item span {
+      color: #333;
+      font-size: 16px;
+      font-weight: 500;
+    }
+    #error-msg {
+      background: #fee2e2;
+      color: #dc2626;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: none;
+    }
+    .canggan {
+      font-size: 11px;
+      color: #666;
+      margin-top: 5px;
+    }
+    @media (max-width: 600px) {
+      .bazi-display {
+        gap: 10px;
+      }
+      .pillar {
+        padding: 10px;
+        min-width: 60px;
+      }
+      .pillar-gan, .pillar-zhi {
+        font-size: 24px;
+      }
+    }
+  </style>
 </head>
 <body>
-<div>请查看开发者工具-控制台</div>
-<script>
-$(function(){
-	var ckey = new Array();
-	ckey[0] = '年柱';
-	ckey[1] = '月柱';
-	ckey[2] = '日柱';
-	ckey[3] = '时柱';
-	ckey[4] = '大运';
-	ckey[5] = '流年';
-	ckey[6] = '流月';
-	ckey[7] = '流日';
-	ckey[8] = '流时';
+  <div class="container">
+    <h1>八字排盘</h1>
 
-	var tgdz = new Array();
-	tgdz[0] = '天干';
-	tgdz[1] = '地支';
+    <div class="card">
+      <h2>输入信息</h2>
+      <div id="error-msg"></div>
 
-	var fm = p.fatemaps(0, 1990, 1, 1, 12, 0, 0);
-	
-	console.log(fm);
-	
-	var tg = fm['tg'];
-	var dz = fm['dz'];
+      <div class="form-row">
+        <div class="form-group">
+          <label>公历年</label>
+          <input type="number" id="year" value="1990" min="-720" max="2300">
+        </div>
+        <div class="form-group">
+          <label>月</label>
+          <input type="number" id="month" value="5" min="1" max="12">
+        </div>
+        <div class="form-group">
+          <label>日</label>
+          <input type="number" id="day" value="15" min="1" max="31">
+        </div>
+        <div class="form-group">
+          <label>时</label>
+          <input type="number" id="hour" value="14" min="0" max="23">
+        </div>
+        <div class="form-group">
+          <label>分</label>
+          <input type="number" id="minute" value="30" min="0" max="59">
+        </div>
+      </div>
 
-	//var tg = [0,1,2,3,4,5,6,7,5];
-	//var dz = [0,1,4,8,11,6,2,5,6];
-	var gxs = GetGX(tg, dz);
-	for(var i in gxs){
-		for(var j in gxs[i]){
-			var gx = gxs[i][j];
-			var a = [];
-			for(var k in gx[0]){
-				array_push(a, ckey[k] + tgdz[gx[1][0]]);
-			}
-			
-			console.log(implode('+', a) + ':' + gx[1][4] + "\n");
-		}
-	}
-});	
-</script>
+      <div class="form-row">
+        <div class="form-group">
+          <label>性别</label>
+          <select id="gender">
+            <option value="1">男</option>
+            <option value="0">女</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>经度</label>
+          <input type="number" id="longitude" value="116.4" step="0.1">
+        </div>
+        <div class="form-group">
+          <label>纬度</label>
+          <input type="number" id="latitude" value="39.9" step="0.1">
+        </div>
+        <div class="form-group" style="display: flex; align-items: flex-end;">
+          <div class="checkbox-group">
+            <input type="checkbox" id="trueSolarTime" checked>
+            <label for="trueSolarTime" style="margin: 0;">使用真太阳时</label>
+          </div>
+        </div>
+      </div>
+
+      <button onclick="calculate()">排盘</button>
+    </div>
+
+    <div id="result" style="display: none;">
+      <div class="card">
+        <h2>四柱八字</h2>
+        <div class="bazi-display" id="bazi-display"></div>
+        <div class="info-grid" id="basic-info"></div>
+      </div>
+
+      <div class="card">
+        <h2>五行分析</h2>
+        <div id="wuxing-section"></div>
+      </div>
+
+      <div class="card">
+        <h2>刑冲合害</h2>
+        <div id="relations-section"></div>
+      </div>
+
+      <div class="card">
+        <h2>大运流年</h2>
+        <div id="dayun-info"></div>
+        <div style="overflow-x: auto; margin-top: 15px;">
+          <table class="dayun-table" id="dayun-table"></table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { BaZi } from './src/index.js';
+
+    window.calculate = function() {
+      const year = parseInt(document.getElementById('year').value);
+      const month = parseInt(document.getElementById('month').value);
+      const day = parseInt(document.getElementById('day').value);
+      const hour = parseInt(document.getElementById('hour').value);
+      const minute = parseInt(document.getElementById('minute').value);
+      const gender = parseInt(document.getElementById('gender').value);
+      const longitude = parseFloat(document.getElementById('longitude').value);
+      const latitude = parseFloat(document.getElementById('latitude').value);
+      const useTrueSolarTime = document.getElementById('trueSolarTime').checked;
+
+      const errorMsg = document.getElementById('error-msg');
+      errorMsg.style.display = 'none';
+
+      try {
+        const bazi = new BaZi({
+          useTrueSolarTime,
+          longitude,
+          latitude
+        });
+
+        const result = bazi.calculate({
+          gender,
+          year, month, day, hour, minute
+        });
+
+        if (!result) {
+          throw new Error('计算失败，请检查输入日期是否有效');
+        }
+
+        displayResult(result);
+        document.getElementById('result').style.display = 'block';
+
+      } catch (e) {
+        errorMsg.textContent = e.message;
+        errorMsg.style.display = 'block';
+        document.getElementById('result').style.display = 'none';
+      }
+    };
+
+    function displayResult(result) {
+      // 显示四柱
+      const pillars = ['year', 'month', 'day', 'hour'];
+      const pillarNames = ['年柱', '月柱', '日柱', '时柱'];
+
+      let baziHtml = '';
+      pillars.forEach((p, i) => {
+        const pillar = result.pillars[p];
+        const shiShen = result.shiShen[p];
+        const cangGan = result.cangGan[p];
+
+        baziHtml += `
+          <div class="pillar">
+            <div class="pillar-name">${pillarNames[i]}</div>
+            <div class="pillar-gan">${pillar.gan}</div>
+            <div class="pillar-zhi">${pillar.zhi}</div>
+            <div class="pillar-shishen">${shiShen.gan} / ${shiShen.zhi}</div>
+            <div class="canggan">藏: ${cangGan.join(' ')}</div>
+          </div>
+        `;
+      });
+      document.getElementById('bazi-display').innerHTML = baziHtml;
+
+      // 基本信息
+      const genderText = result.input.gender === 1 ? '男' : '女';
+      let basicInfoHtml = `
+        <div class="info-item">
+          <label>八字</label>
+          <span>${result.bazi}</span>
+        </div>
+        <div class="info-item">
+          <label>性别</label>
+          <span>${genderText}命</span>
+        </div>
+        <div class="info-item">
+          <label>农历</label>
+          <span>${result.lunar ? `${result.lunar.yearGanZhi}年 ${result.lunar.isLeap ? '闰' : ''}${result.lunar.monthName}${result.lunar.dayName}` : '-'}</span>
+        </div>
+        <div class="info-item">
+          <label>生肖</label>
+          <span>${result.shengXiao}</span>
+        </div>
+        <div class="info-item">
+          <label>星座</label>
+          <span>${result.xingZuo}</span>
+        </div>
+        <div class="info-item">
+          <label>阴阳</label>
+          <span>阳${result.yinYang.yang}个 阴${result.yinYang.yin}个</span>
+        </div>
+      `;
+      if (result.time.trueSolar) {
+        basicInfoHtml += `
+          <div class="info-item">
+            <label>真太阳时</label>
+            <span>${result.time.trueSolar[3]}:${String(result.time.trueSolar[4]).padStart(2,'0')}:${String(Math.floor(result.time.trueSolar[5])).padStart(2,'0')}</span>
+          </div>
+        `;
+      }
+      document.getElementById('basic-info').innerHTML = basicInfoHtml;
+
+      // 五行分析
+      const wxNames = { 金: 'jin', 水: 'shui', 木: 'mu', 火: 'huo', 土: 'tu' };
+      const wxOrder = ['金', '水', '木', '火', '土'];
+
+      let wuxingBarHtml = '<div class="wuxing-bar">';
+      wxOrder.forEach(wx => {
+        const percent = result.wuXing.percent[wx];
+        if (percent > 0) {
+          wuxingBarHtml += `<div class="wx-${wxNames[wx]}" style="flex: ${percent};">${wx} ${percent}%</div>`;
+        }
+      });
+      wuxingBarHtml += '</div>';
+
+      let wuxingDetailHtml = '<div class="info-grid">';
+      wxOrder.forEach(wx => {
+        wuxingDetailHtml += `
+          <div class="info-item">
+            <label>${wx}</label>
+            <span>个数: ${result.wuXing.count[wx]} | 分数: ${result.wuXing.score[wx]}</span>
+          </div>
+        `;
+      });
+      wuxingDetailHtml += '</div>';
+
+      document.getElementById('wuxing-section').innerHTML = wuxingBarHtml + wuxingDetailHtml;
+
+      // 刑冲合害
+      let relationsHtml = '<div class="result-section"><h3>天干关系</h3><div class="relations-list">';
+      if (result.relations.gan.length === 0) {
+        relationsHtml += '<span style="color: #888;">无</span>';
+      } else {
+        result.relations.gan.forEach(r => {
+          relationsHtml += `<span class="relation-tag">${r.items.join('')}${r.type}${r.result ? '化'+r.result : ''}</span>`;
+        });
+      }
+      relationsHtml += '</div></div>';
+
+      relationsHtml += '<div class="result-section"><h3>地支关系</h3><div class="relations-list">';
+      if (result.relations.zhi.length === 0) {
+        relationsHtml += '<span style="color: #888;">无</span>';
+      } else {
+        result.relations.zhi.forEach(r => {
+          relationsHtml += `<span class="relation-tag">${r.items.join('')}${r.type}${r.result ? '化'+r.result : ''}</span>`;
+        });
+      }
+      relationsHtml += '</div></div>';
+
+      // 格局
+      const formationTypes = [
+        { key: 'sanHui', name: '三会' },
+        { key: 'sanHe', name: '三合' },
+        { key: 'liuHe', name: '六合' },
+        { key: 'banHe', name: '半合' }
+      ];
+
+      let hasFormation = false;
+      relationsHtml += '<div class="result-section"><h3>格局</h3><div class="relations-list">';
+      formationTypes.forEach(ft => {
+        const formations = result.formations[ft.key];
+        if (formations && formations.length > 0) {
+          hasFormation = true;
+          formations.forEach(f => {
+            relationsHtml += `<span class="relation-tag">${f.zhi.join('')}${ft.name}${f.element || ''}</span>`;
+          });
+        }
+      });
+      if (!hasFormation) {
+        relationsHtml += '<span style="color: #888;">无</span>';
+      }
+      relationsHtml += '</div></div>';
+
+      document.getElementById('relations-section').innerHTML = relationsHtml;
+
+      // 大运
+      let dayunInfoHtml = `
+        <div class="info-grid">
+          <div class="info-item">
+            <label>大运方向</label>
+            <span>${result.daYun.direction}排</span>
+          </div>
+          <div class="info-item">
+            <label>起运年龄</label>
+            <span>${result.daYun.startAge}岁</span>
+          </div>
+          <div class="info-item">
+            <label>起运公历年</label>
+            <span>${result.daYun.startYear}年</span>
+          </div>
+        </div>
+        <p style="margin-top: 15px; color: #666; font-size: 14px;">${result.daYun.startDesc}</p>
+        <p style="color: #666; font-size: 14px;">${result.daYun.jiaoyunDesc}</p>
+      `;
+      document.getElementById('dayun-info').innerHTML = dayunInfoHtml;
+
+      // 大运表格
+      let tableHtml = '<thead><tr><th>大运</th><th>年龄</th><th>长生</th>';
+      for (let i = 1; i <= 10; i++) {
+        tableHtml += `<th>流年${i}</th>`;
+      }
+      tableHtml += '</tr></thead><tbody>';
+
+      result.daYun.cycles.forEach(cycle => {
+        tableHtml += `<tr>
+          <td><strong>${cycle.ganZhi}</strong></td>
+          <td>${cycle.ageRange[0]}-${cycle.ageRange[1]}</td>
+          <td>${cycle.zhangSheng}</td>`;
+        cycle.liuNian.forEach(ln => {
+          tableHtml += `<td>${ln.ganZhi}<br><small style="color:#888">${ln.age}岁</small></td>`;
+        });
+        tableHtml += '</tr>';
+      });
+      tableHtml += '</tbody>';
+
+      document.getElementById('dayun-table').innerHTML = tableHtml;
+    }
+
+    // 页面加载后自动计算一次
+    window.onload = function() {
+      calculate();
+    };
+  </script>
 </body>
 </html>

@@ -1,0 +1,51 @@
+{
+  "name": "paipan",
+  "version": "2.0.0",
+  "description": "八字排盘库 - 中国传统命理计算工具",
+  "main": "src/index.js",
+  "module": "src/index.js",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./src/index.js",
+      "default": "./src/index.js"
+    },
+    "./core/*": "./src/core/*.js",
+    "./converter/*": "./src/converter/*.js",
+    "./calculator/*": "./src/calculator/*.js",
+    "./analysis/*": "./src/analysis/*.js",
+    "./data/*": "./src/data/*.js"
+  },
+  "files": [
+    "src/**/*.js",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "echo \"No tests configured yet\"",
+    "demo": "open demo.html"
+  },
+  "keywords": [
+    "八字",
+    "排盘",
+    "四柱",
+    "bazi",
+    "chinese-calendar",
+    "lunar-calendar",
+    "fortune",
+    "astrology",
+    "万年历",
+    "干支",
+    "五行",
+    "十神",
+    "大运"
+  ],
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
