@@ -224,4 +224,4 @@ const relations = RelationshipAnalyzer.analyze(pillars.ganIndices, pillars.zhiIn
 
 ## 许可证
 
-MIT License,见 [LICENSE](LICENSE)(文末附上游许可说明)。
+MIT License,见 [LICENSE](LICENSE);上游许可说明见 [NOTICE.md](NOTICE.md)。
