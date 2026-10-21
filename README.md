@@ -217,6 +217,11 @@ const relations = RelationshipAnalyzer.analyze(pillars.ganIndices, pillars.zhiIn
 - 算法原理：http://www.bieyu.com/
 - 农历修正：寿星万年历 http://www.nongli.net/sxwnl/
 
+## 致谢
+
+- 基于 [hkargc/JavaScript-For-Paipan](https://github.com/hkargc/JavaScript-For-Paipan) 重构,原项目以 WTFPL 发布。
+- 公历农历互转与节气计算源自寿星万年历(sxwnl),见 `legacy/sxwnl/`。
+
 ## 许可证
 
-MIT License
+MIT License,见 [LICENSE](LICENSE)(文末附上游许可说明)。
